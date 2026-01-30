@@ -24,28 +24,33 @@ const Signin = () => {
   const display = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://codemojibackend2k25.onrender.com/participantverify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      
+      const response = await fetch(
+        "http://localhost:5000/api/users/participantverify",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        },
+      );
+
       const result = await response.json();
       console.log("Server Response:", result);
       setMessage(result.message);
 
       if (response.ok) {
-        // Store only participantEmail in sessionStorage
+        sessionStorage.clear();
         sessionStorage.setItem("participantEmail", result.email);
-    
-        // Navigate to Events page (we will fetch full data there)
+
         navigate("/signin/events");
-    }
-    
+      }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("An error occurred. Please try again.");
+      setMessage("You are not a valid use.Please register");
     }
+  };
+
+  const goToSignup = () => {
+    navigate("/signup");
   };
 
   return (
@@ -55,17 +60,21 @@ const Signin = () => {
         <div className="flex-grow flex justify-center items-center p-6">
           {/* Glassmorphism with Light Borders */}
           <div className="relative bg-white p-10 rounded-2xl shadow-lg w-full max-w-md border border-gray-300 transition-all duration-300 hover:shadow-2xl">
-            
             <h2 className="text-[#01052A] text-2xl font-bold text-center mb-6">
               Welcome to CodeMoji!
             </h2>
 
-            {message && <div className="text-red-600 text-center mb-4">{message}</div>}
+            {message && (
+              <div className="text-red-600 text-center mb-4">{message}</div>
+            )}
 
             <form onSubmit={display} className="space-y-5">
               {/* Email Input */}
               <div className="flex flex-col">
-                <label htmlFor="email" className="text-gray-700 font-medium mb-2">
+                <label
+                  htmlFor="email"
+                  className="text-gray-700 font-medium mb-2"
+                >
                   Email Address
                 </label>
                 <input
@@ -78,10 +87,12 @@ const Signin = () => {
                   className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01052A] transition-all duration-300 hover:border-[#01052A]"
                 />
               </div>
-
               {/* Password Input */}
               <div className="flex flex-col relative">
-                <label htmlFor="password" className="text-gray-700 font-medium mb-2">
+                <label
+                  htmlFor="password"
+                  className="text-gray-700 font-medium mb-2"
+                >
                   Password
                 </label>
                 <input
@@ -101,7 +112,6 @@ const Signin = () => {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-
               {/* Soft-Shadow Button */}
               <button
                 type="submit"
@@ -109,11 +119,23 @@ const Signin = () => {
               >
                 Login
               </button>
-
-              {/* Footer Message */}
               <div className="text-center mt-4 text-gray-600 font-medium">
-                <p className="text-sm font-bold">🌟 Where coding meets creativity 🌟</p>
+                <p className="text-sm">
+                  Don’t have an account?{" "}
+                  <span
+                    onClick={goToSignup}
+                    className="text-[#01052A] font-bold cursor-pointer hover:underline"
+                  >
+                    Sign up
+                  </span>
+                </p>
               </div>
+              {/* Footer Message
+              <div className="text-center mt-4 text-gray-600 font-medium">
+                <p className="text-sm font-bold">
+                  🌟 Where coding meets creativity 🌟
+                </p>
+              </div> */}
             </form>
           </div>
         </div>

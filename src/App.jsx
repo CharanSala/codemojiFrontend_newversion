@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
+import Home from "./Pages/Home";
 import Signin, { UserContext } from "./components/Signin";
 import About from "./components/About";
 import Events from "./components/Events";
 import Leaderboard from "./components/Leaderboard";
 import OfflineRegistration from "./components/OfflineRegistration";
+import Signup from "./components/Signup";
 
 const App = () => {
   const [user, setUser] = useState(null); // Store user name globally
@@ -15,12 +16,15 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/leaderboard" element={<Leaderboard/>}/> 
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
           {/* <Route path="connect" element={<connect/>}/>  */}
-          <Route path="/signin" element={<Signin setUser={setUser} />} /> {/* Pass setUser */}
+          <Route path="/signin" element={<Signin setUser={setUser} />} />{" "}
+          {/* Pass setUser */}
           <Route path="/about" element={<About />} />
-          <Route path="/signin/events" element={<Events />} /> {/* Corrected path */}
-          <Route path="/offline" element={< OfflineRegistration />} />
+          <Route path="/signin/events" element={<Events />} />{" "}
+          {/* Corrected path */}
+          <Route path="/offline" element={<OfflineRegistration />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>
