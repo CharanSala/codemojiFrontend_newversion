@@ -5,7 +5,6 @@ import Signin, { UserContext } from "./components/Signin";
 import About from "./components/About";
 import Events from "./components/Events";
 import Leaderboard from "./components/Leaderboard";
-import OfflineRegistration from "./components/OfflineRegistration";
 import Signup from "./components/Signup";
 
 const App = () => {
@@ -24,7 +23,6 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/signin/events" element={<Events />} />{" "}
           {/* Corrected path */}
-          <Route path="/offline" element={<OfflineRegistration />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

@@ -28,7 +28,7 @@ const Events = () => {
     const fetchParticipant = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/get/getParticipantDetails?email=${participantEmail}`,
+          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${participantEmail}`,
         );
         const data = await response.json();
 
@@ -131,13 +131,16 @@ const Events = () => {
 
   const handleReplay = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/replay/reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: sessionStorage.getItem("participantEmail"),
-        }),
-      });
+      const response = await fetch(
+        "https://codemoji.onrender.com/api/replay/reset",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: sessionStorage.getItem("participantEmail"),
+          }),
+        },
+      );
 
       const data = await response.json();
 

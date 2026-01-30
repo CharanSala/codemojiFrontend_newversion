@@ -41,7 +41,7 @@ const Navbar = () => {
         }
 
         const response = await fetch(
-          `http://localhost:5000/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
+          `https://codemoji.onrender.com/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
