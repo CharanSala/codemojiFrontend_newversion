@@ -2,6 +2,7 @@ import React, { useState, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Navbar from "./Navbar";
+import { apiFetch } from "../utils/api";
 
 export const UserContext = createContext();
 
@@ -25,7 +26,7 @@ const Signin = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         "https://codemoji.onrender.com/api/users/participantverify",
         {
           method: "POST",
