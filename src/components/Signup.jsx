@@ -29,7 +29,7 @@ const Signup = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/signup/participantsignup",
+        "https://codemoji.onrender.com/api/signup/participantsignup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
