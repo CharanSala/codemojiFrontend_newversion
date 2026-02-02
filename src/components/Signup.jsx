@@ -29,7 +29,7 @@ const Signup = () => {
 
     try {
       const response = await fetch(
-        "https://codemoji.onrender.com/api/signup/participantsignup",
+        "http://localhost:5000/api/signup/participantsignup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -39,10 +39,15 @@ const Signup = () => {
 
       const result = await response.json();
       console.log("Signup Response:", result);
+
       setMessage(result.message || "Signup completed");
 
       if (response.ok) {
-        // Auto-redirect to signin after successful signup
+        // ✅ Clear any old tokens just in case
+        localStorage.removeItem("token");
+        sessionStorage.clear();
+
+        // Auto redirect to signin
         setTimeout(() => {
           navigate("/signin");
         }, 1500);

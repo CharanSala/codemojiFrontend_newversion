@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -26,8 +27,12 @@ const Navbar = () => {
   }, []);
 
   const handleSignOut = () => {
+    // Remove both storages
     sessionStorage.removeItem("participantEmail");
+    localStorage.removeItem("token"); // 🔐 IMPORTANT
+
     setEmialIn(false);
+
     navigate("/");
   };
 
@@ -40,8 +45,8 @@ const Navbar = () => {
           return;
         }
 
-        const response = await fetch(
-          `https://codemoji.onrender.com/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
+        const response = await apiFetch(
+          `http://localhost:5000/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },

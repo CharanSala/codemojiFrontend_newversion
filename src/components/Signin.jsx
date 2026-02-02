@@ -23,9 +23,10 @@ const Signin = () => {
 
   const display = async (e) => {
     e.preventDefault();
+
     try {
       const response = await fetch(
-        "https://codemoji.onrender.com/api/users/participantverify",
+        "http://localhost:5000/api/users/participantverify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -35,17 +36,20 @@ const Signin = () => {
 
       const result = await response.json();
       console.log("Server Response:", result);
+
       setMessage(result.message);
 
       if (response.ok) {
         sessionStorage.clear();
+
         sessionStorage.setItem("participantEmail", result.email);
+        localStorage.setItem("token", result.token);
 
         navigate("/signin/events");
       }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("You are not a valid use.Please register");
+      setMessage("You are not a valid user. Please register");
     }
   };
 

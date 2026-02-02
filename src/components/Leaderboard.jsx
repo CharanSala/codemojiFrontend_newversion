@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
+import { apiFetch } from "../utils/api";
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -9,8 +10,8 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch(
-          "https://codemoji.onrender.com/api/lead/leaderboard",
+        const response = await apiFetch(
+          "http://localhost:5000/api/lead/leaderboard",
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },

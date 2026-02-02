@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
+import { apiFetch } from "../utils/api";
 
 const Round2 = ({ setAllPassed2 }) => {
   const [participant, setParticipant] = useState(null);
@@ -14,8 +15,8 @@ const Round2 = ({ setAllPassed2 }) => {
 
     const fetchParticipantDetails = async () => {
       try {
-        const response = await fetch(
-          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${encodeURIComponent(participantEmail)}`,
+        const response = await apiFetch(
+          `http://localhost:5000/api/get/getParticipantDetails?email=${encodeURIComponent(participantEmail)}`,
         );
 
         const data = await response.json();
@@ -312,8 +313,8 @@ Mystery_box3 (🔢) {
     try {
       const input = withInput ? Input : ""; // Only send input if 'withInput' is true
 
-      const response = await fetch(
-        "https://codemoji.onrender.com/api/compilecode/compile",
+      const response = await apiFetch(
+        "http://localhost:5000/api/compilecode/compile",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -349,8 +350,8 @@ Mystery_box3 (🔢) {
         return;
       }
 
-      const response = await fetch(
-        "https://codemoji.onrender.com/api/compilecode/compile",
+      const response = await apiFetch(
+        "http://localhost:5000/api/compilecode/compile",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -457,8 +458,8 @@ Mystery_box3 (🔢) {
     }
 
     try {
-      const response = await fetch(
-        "https://codemoji.onrender.com/api/save/savecode",
+      const response = await apiFetch(
+        "http://localhost:5000/api/save/savecode",
         {
           method: "POST",
           headers: {
@@ -513,14 +514,11 @@ Mystery_box3 (🔢) {
 
       try {
         // 🔥 Get / set round2 start time from DB
-        const res = await fetch(
-          "https://codemoji.onrender.com/api/round2/start",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          },
-        );
+        const res = await apiFetch("http://localhost:5000/api/round2/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
 
         const data = await res.json();
 
@@ -533,7 +531,7 @@ Mystery_box3 (🔢) {
           const remaining = ROUND2_DURATION - elapsed;
 
           if (remaining <= 0) {
-            fetch("https://codemoji.onrender.com/api/autosubmit/round2", {
+            apiFetch("http://localhost:5000/api/autosubmit/round2", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email }),

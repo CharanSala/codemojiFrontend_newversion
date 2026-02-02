@@ -6,23 +6,58 @@ import About from "./components/About";
 import Events from "./components/Events";
 import Leaderboard from "./components/Leaderboard";
 import Signup from "./components/Signup";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 const App = () => {
-  const [user, setUser] = useState(null); // Store user name globally
+  const [user, setUser] = useState(null);
 
   return (
     <UserContext.Provider value={user}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* ❌ BLOCK when token exists */}
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <Home />
+              </PublicRoute>
+            }
+          />
+
           <Route path="/signup" element={<Signup />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          {/* <Route path="connect" element={<connect/>}/>  */}
-          <Route path="/signin" element={<Signin setUser={setUser} />} />{" "}
-          {/* Pass setUser */}
+
+          <Route
+            path="/signin"
+            element={
+              <PublicRoute>
+                <Signin setUser={setUser} />
+              </PublicRoute>
+            }
+          />
+
+          {/* PUBLIC */}
           <Route path="/about" element={<About />} />
-          <Route path="/signin/events" element={<Events />} />{" "}
-          {/* Corrected path */}
+
+          {/* 🔐 PROTECTED */}
+          <Route
+            path="/signin/events"
+            element={
+              <ProtectedRoute>
+                <Events />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute>
+                <Leaderboard />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

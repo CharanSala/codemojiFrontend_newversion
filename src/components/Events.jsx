@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Round1 from "./Round1";
 import Round2 from "./Round2";
 import Round3 from "./Round3";
+import { apiFetch } from "../utils/api";
 
 const Events = () => {
   const [participant1, setParticipant1] = useState(null);
@@ -27,8 +28,8 @@ const Events = () => {
 
     const fetchParticipant = async () => {
       try {
-        const response = await fetch(
-          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${participantEmail}`,
+        const response = await apiFetch(
+          `http://localhost:5000/api/get/getParticipantDetails?email=${participantEmail}`,
         );
         const data = await response.json();
 
@@ -93,7 +94,7 @@ const Events = () => {
         setShowSmiley(false);
         setSelectedRound(3);
         setRestoreFlow(false);
-      }, 3000);
+      }, 1500);
     }
   }, [showSmiley, restoreFlow]);
 
@@ -114,7 +115,7 @@ const Events = () => {
       setTimeout(() => {
         setShowSmiley(false);
         setSelectedRound(3);
-      }, 3000);
+      }, 1500);
     }
   }, [allPassed2, allPassed3, restoreFlow]);
 
@@ -131,8 +132,8 @@ const Events = () => {
 
   const handleReplay = async () => {
     try {
-      const response = await fetch(
-        "https://codemoji.onrender.com/api/replay/reset",
+      const response = await apiFetch(
+        "http://localhost:5000/api/replay/reset",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

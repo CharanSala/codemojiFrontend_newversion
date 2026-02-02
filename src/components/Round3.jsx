@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { apiFetch } from "../utils/api";
 const Round3 = ({ setAllPassed3 }) => {
   const problemSets = {
     1: {
@@ -72,14 +72,11 @@ const Round3 = ({ setAllPassed3 }) => {
       if (!email) return;
 
       try {
-        const res = await fetch(
-          "https://codemoji.onrender.com/api/round3/start",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          },
-        );
+        const res = await apiFetch("http://localhost:5000/api/round3/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
 
         const data = await res.json();
 
@@ -90,7 +87,7 @@ const Round3 = ({ setAllPassed3 }) => {
           const remaining = Math.floor((ROUND3_DURATION - elapsed) / 1000);
 
           if (remaining <= 0) {
-            fetch("https://codemoji.onrender.com/api/autosubmit/round3", {
+            apiFetch("http://localhost:5000/api/autosubmit/round3", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email }),
@@ -123,8 +120,8 @@ const Round3 = ({ setAllPassed3 }) => {
     const fetchData = async () => {
       if (!participantEmail) return;
       try {
-        const pRes = await fetch(
-          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${participantEmail}`,
+        const pRes = await apiFetch(
+          `http://localhost:5000/api/get/getParticipantDetails?email=${participantEmail}`,
         );
         const pData = await pRes.json();
         if (pRes.ok) {
@@ -136,8 +133,8 @@ const Round3 = ({ setAllPassed3 }) => {
           }
         }
 
-        const hRes = await fetch(
-          "https://codemoji.onrender.com/api/gethint/gethints",
+        const hRes = await apiFetch(
+          "http://localhost:5000/api/gethint/gethints",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -170,8 +167,8 @@ const Round3 = ({ setAllPassed3 }) => {
   const handleSubmit = async () => {
     setIsLoading1(true);
     try {
-      const response = await fetch(
-        "https://codemoji.onrender.com/api/output/outputverify",
+      const response = await apiFetch(
+        "http://localhost:5000/api/output/outputverify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -197,8 +194,8 @@ const Round3 = ({ setAllPassed3 }) => {
     setLoading(true);
     const endpoints = ["updatepoints", "updatepoints1", "updatepoints2"];
     try {
-      const response = await fetch(
-        `https://codemoji.onrender.com/api/update/${endpoints[hintNum - 1]}`,
+      const response = await apiFetch(
+        `http://localhost:5000/api/update/${endpoints[hintNum - 1]}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
