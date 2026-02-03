@@ -26,7 +26,7 @@ const Signin = () => {
     e.preventDefault();
 
     try {
-      const response = await apiFetch(
+      const response = await fetch(
         "https://codemoji.onrender.com/api/users/participantverify",
         {
           method: "POST",
