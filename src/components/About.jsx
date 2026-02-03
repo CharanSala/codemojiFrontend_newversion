@@ -1,6 +1,11 @@
 import React from "react";
 import Navbar from "./Navbar";
-import { FaLinkedin, FaInstagram, FaGithub } from "react-icons/fa";
+import {
+  FaLinkedin,
+  FaInstagram,
+  FaGithub,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
 // Team Photos
 import photo1 from "/images/photo1.jpg";
@@ -40,7 +45,7 @@ const About = () => {
       <Navbar />
 
       {/* Hero Header */}
-      <section className="py-16 bg-slate-50 border-b border-slate-100">
+      <section className="py-12 bg-slate-50 border-b border-slate-100">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 flex flex-wrap items-center justify-center gap-3">
             <span>HOW</span>
@@ -54,6 +59,24 @@ const About = () => {
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Every round you complete brings a spark of joy. Finish all the
             challenges to turn this sad emoji into a happy one !
+          </p>
+        </div>
+      </section>
+
+      {/* Important Alert Section */}
+      <section className="container mx-auto px-6 mt-0">
+        <div className="max-w-4xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg shadow-sm">
+          <div className="flex items-center gap-3 mb-2">
+            <FaExclamationTriangle className="text-amber-600 text-xl" />
+            <h4 className="font-bold text-amber-900 uppercase tracking-tight">
+              Important Notice
+            </h4>
+          </div>
+          <p className="text-amber-800 leading-relaxed">
+            Once a round starts, the <strong>timer runs continuously</strong>.
+            Signing out or closing your browser tab{" "}
+            <strong>will not pause</strong> the clock. Ensure you have
+            dedicated, uninterrupted time before starting your Codemoji session!
           </p>
         </div>
       </section>
@@ -137,7 +160,7 @@ const About = () => {
         </div>
 
         {/* Round 3 */}
-        <div className="flex flex-col md:flex-row gap-8 mb-20 relative">
+        <div className="flex flex-col md:flex-row gap-8 mb-10 relative">
           <div className="md:w-1/4">
             <h2 className="text-5xl font-bold text-pink-100 tracking-tighter flex items-center gap-2">
               03 <span className="text-3xl ">😊</span>
@@ -181,9 +204,9 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="bg-slate-50 py-20 border-t border-slate-200">
+      <section className="bg-slate-50 py-10 border-t border-slate-200">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-12">Meet the Organizers</h2>
+          <h2 className="text-3xl font-bold mb-10">Meet the Organizers</h2>
           <div className="flex flex-wrap justify-center gap-12">
             {teamMembers.map((member, index) => (
               <div key={index} className="flex flex-col items-center">
