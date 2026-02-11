@@ -16,6 +16,68 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { name, email, password } = data;
 
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [verified, setVerified] = useState(false);
+
+  // 🔹 Loader States (ONLY ADDITION)
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [signingUp, setSigningUp] = useState(false);
+
+  const sendOtp = async () => {
+    try {
+      setSendingOtp(true);
+
+      const response = await fetch("http://localhost:5000/api/send/sendotp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setOtpSent(true);
+        setMessage("OTP sent to your email");
+      } else {
+        setMessage(result.message);
+      }
+    } catch (err) {
+      setMessage("Error sending OTP");
+    } finally {
+      setSendingOtp(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    try {
+      setVerifyingOtp(true);
+
+      const response = await fetch(
+        "http://localhost:5000/api/verify/verifyotp",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setVerified(true);
+        setMessage("Email verified successfully");
+      } else {
+        setMessage("Invalid OTP");
+      }
+    } catch (err) {
+      setMessage("Verification failed");
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
+
   const handler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -28,8 +90,10 @@ const Signup = () => {
     e.preventDefault();
 
     try {
+      setSigningUp(true);
+
       const response = await fetch(
-        "https://codemoji.onrender.com/api/signup/participantsignup",
+        "http://localhost:5000/api/signup/participantsignup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -43,11 +107,9 @@ const Signup = () => {
       setMessage(result.message || "Signup completed");
 
       if (response.ok) {
-        // ✅ Clear any old tokens just in case
         localStorage.removeItem("token");
         sessionStorage.clear();
 
-        // Auto redirect to signin
         setTimeout(() => {
           navigate("/signin");
         }, 1500);
@@ -55,7 +117,13 @@ const Signup = () => {
     } catch (error) {
       console.error("Signup Error:", error);
       setMessage("Something went wrong. Please try again.");
+    } finally {
+      setSigningUp(false);
     }
+  };
+
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   return (
@@ -63,7 +131,7 @@ const Signup = () => {
       <Navbar />
       <div className="flex-grow flex justify-center items-center p-6">
         <div className="relative bg-white p-10 rounded-2xl shadow-lg w-full max-w-md border border-gray-300 transition-all duration-300 hover:shadow-2xl">
-          <h1 className="text-2xl flex justify-center mb-10 font-bold drop-shadow-lg text-blue">
+          <h1 className="text-2xl flex justify-center mb-5 font-bold drop-shadow-lg text-blue">
             Code<span className="text-blue-400">Moji</span>😝
           </h1>
 
@@ -125,12 +193,63 @@ const Signup = () => {
               </button>
             </div>
 
+            {!otpSent ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (!email) {
+                    setMessage("Please enter email first");
+                    return;
+                  }
+
+                  if (!isValidEmail(email)) {
+                    setMessage("Please enter valid email");
+                    return;
+                  }
+
+                  sendOtp();
+                }}
+                disabled={sendingOtp}
+                className="bg-blue-500 text-white p-2 rounded"
+              >
+                {sendingOtp ? "Sending..." : "Send OTP"}
+              </button>
+            ) : (
+              <div className="flex flex-col">
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="p-3 border rounded"
+                />
+
+                <button
+                  type="button"
+                  onClick={verifyOtp}
+                  disabled={verified || verifyingOtp}
+                  className={`p-2 rounded mt-2 text-white ${
+                    verified ? "bg-gray-400 cursor-not-allowed" : "bg-green-500"
+                  }`}
+                >
+                  {verifyingOtp
+                    ? "Verifying..."
+                    : verified
+                      ? "Verified ✓"
+                      : "Verify OTP"}
+                </button>
+              </div>
+            )}
+
             {/* Signup Button */}
             <button
               type="submit"
-              className="w-full py-3 bg-[#01052A] text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              disabled={!verified || signingUp}
+              className={`w-full py-3 ${
+                verified ? "bg-[#01052A]" : "bg-gray-400"
+              } text-white rounded-lg`}
             >
-              Sign Up
+              {signingUp ? "Creating Account..." : "Sign Up"}
             </button>
 
             {/* Footer */}

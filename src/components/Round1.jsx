@@ -18,7 +18,7 @@ const Round1 = ({ setAllPassed }) => {
         if (!email) return;
 
         const response = await apiFetch(
-          "https://codemoji.onrender.com/api/roundstart/round1",
+          "http://localhost:5000/api/roundstart/round1",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -34,7 +34,7 @@ const Round1 = ({ setAllPassed }) => {
           const remaining = ROUND1_DURATION - elapsed;
 
           if (remaining <= 0) {
-            apiFetch("https://codemoji.onrender.com/api/autosubmit1/round1", {
+            apiFetch("http://localhost:5000/api/autosubmit1/round1", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email }),
@@ -73,7 +73,7 @@ const Round1 = ({ setAllPassed }) => {
       if (!participantEmail) return;
       try {
         const response = await apiFetch(
-          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${participantEmail}`,
+          `http://localhost:5000/api/get/getParticipantDetails?email=${participantEmail}`,
         );
         const data = await response.json();
         if (response.ok) {
@@ -170,7 +170,7 @@ const Round1 = ({ setAllPassed }) => {
     setIsLoading1(true);
     try {
       const response = await apiFetch(
-        "https://codemoji.onrender.com/api/logicpatch1/verify1",
+        "http://localhost:5000/api/logicpatch1/verify1",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -199,7 +199,7 @@ const Round1 = ({ setAllPassed }) => {
         return;
       }
       const response = await apiFetch(
-        "https://codemoji.onrender.com/api/logicpatch2/verify",
+        "http://localhost:5000/api/logicpatch2/verify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

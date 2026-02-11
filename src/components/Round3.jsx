@@ -72,14 +72,11 @@ const Round3 = ({ setAllPassed3 }) => {
       if (!email) return;
 
       try {
-        const res = await apiFetch(
-          "https://codemoji.onrender.com/api/round3/start",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          },
-        );
+        const res = await apiFetch("http://localhost:5000/api/round3/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
 
         const data = await res.json();
 
@@ -90,7 +87,7 @@ const Round3 = ({ setAllPassed3 }) => {
           const remaining = Math.floor((ROUND3_DURATION - elapsed) / 1000);
 
           if (remaining <= 0) {
-            apiFetch("https://codemoji.onrender.com/api/autosubmit/round3", {
+            apiFetch("http://localhost:5000/api/autosubmit/round3", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email }),
@@ -124,7 +121,7 @@ const Round3 = ({ setAllPassed3 }) => {
       if (!participantEmail) return;
       try {
         const pRes = await apiFetch(
-          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${participantEmail}`,
+          `http://localhost:5000/api/get/getParticipantDetails?email=${participantEmail}`,
         );
         const pData = await pRes.json();
         if (pRes.ok) {
@@ -137,7 +134,7 @@ const Round3 = ({ setAllPassed3 }) => {
         }
 
         const hRes = await apiFetch(
-          "https://codemoji.onrender.com/api/gethint/gethints",
+          "http://localhost:5000/api/gethint/gethints",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -171,7 +168,7 @@ const Round3 = ({ setAllPassed3 }) => {
     setIsLoading1(true);
     try {
       const response = await apiFetch(
-        "https://codemoji.onrender.com/api/output/outputverify",
+        "http://localhost:5000/api/output/outputverify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -198,7 +195,7 @@ const Round3 = ({ setAllPassed3 }) => {
     const endpoints = ["updatepoints", "updatepoints1", "updatepoints2"];
     try {
       const response = await apiFetch(
-        `https://codemoji.onrender.com/api/update/${endpoints[hintNum - 1]}`,
+        `http://localhost:5000/api/update/${endpoints[hintNum - 1]}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

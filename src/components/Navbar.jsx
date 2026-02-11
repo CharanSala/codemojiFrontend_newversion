@@ -46,7 +46,7 @@ const Navbar = () => {
         }
 
         const response = await apiFetch(
-          `https://codemoji.onrender.com/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
+          `http://localhost:5000/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -135,14 +135,18 @@ const Navbar = () => {
               </Link>
             )}
           </li>
-          <li>
-            <Link
-              to="/leaderboard"
-              className="text-gray-200 mt-3 hover:text-blue-500 transition duration-300 flex items-center"
-            >
-              🏆Leaderboard
-            </Link>
-          </li>
+
+          {EmailIn && (
+            <li>
+              <Link
+                to="/leaderboard"
+                className="text-gray-200 mt-3 hover:text-blue-500 transition duration-300 flex items-center"
+              >
+                🏆Leaderboard
+              </Link>
+              ,
+            </li>
+          )}
 
           <li>
             <Link

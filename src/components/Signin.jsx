@@ -14,6 +14,9 @@ const Signin = () => {
   const { email, password } = data;
   const [user, setUser] = useState(null);
 
+  // ✅ LOADER STATE
+  const [loading, setLoading] = useState(false);
+
   const handler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -25,9 +28,13 @@ const Signin = () => {
   const display = async (e) => {
     e.preventDefault();
 
+    // ✅ START LOADER
+    setLoading(true);
+    setMessage("");
+
     try {
       const response = await fetch(
-        "https://codemoji.onrender.com/api/users/participantverify",
+        "http://localhost:5000/api/users/participantverify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -52,6 +59,9 @@ const Signin = () => {
       console.error("Error:", error);
       setMessage("You are not a valid user. Please register");
     }
+
+    // ✅ STOP LOADER
+    setLoading(false);
   };
 
   const goToSignup = () => {
@@ -63,7 +73,6 @@ const Signin = () => {
       <div className="min-h-screen flex flex-col bg-white">
         <Navbar />
         <div className="flex-grow flex justify-center items-center p-6">
-          {/* Glassmorphism with Light Borders */}
           <div className="relative bg-white p-10 rounded-2xl shadow-lg w-full max-w-md border border-gray-300 transition-all duration-300 hover:shadow-2xl">
             <h2 className="text-[#01052A] text-2xl font-bold text-center mb-6">
               Welcome to CodeMoji!
@@ -76,10 +85,7 @@ const Signin = () => {
             <form onSubmit={display} className="space-y-5">
               {/* Email Input */}
               <div className="flex flex-col">
-                <label
-                  htmlFor="email"
-                  className="text-gray-700 font-medium mb-2"
-                >
+                <label className="text-gray-700 font-medium mb-2">
                   Email Address
                 </label>
                 <input
@@ -92,12 +98,10 @@ const Signin = () => {
                   className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01052A] transition-all duration-300 hover:border-[#01052A]"
                 />
               </div>
+
               {/* Password Input */}
               <div className="flex flex-col relative">
-                <label
-                  htmlFor="password"
-                  className="text-gray-700 font-medium mb-2"
-                >
+                <label className="text-gray-700 font-medium mb-2">
                   Password
                 </label>
                 <input
@@ -109,6 +113,7 @@ const Signin = () => {
                   placeholder="Enter your password"
                   className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#01052A] transition-all duration-300 hover:border-[#01052A]"
                 />
+
                 <button
                   type="button"
                   className="absolute right-4 top-12 text-gray-500 hover:text-gray-700"
@@ -117,13 +122,18 @@ const Signin = () => {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              {/* Soft-Shadow Button */}
+
+              {/* LOGIN BUTTON WITH LOADER */}
               <button
                 type="submit"
-                className="w-full py-3 bg-[#01052A] text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                disabled={loading}
+                className={`w-full py-3 text-white font-semibold rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 ${
+                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#01052A]"
+                }`}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
+
               <div className="text-center mt-4 text-gray-600 font-medium">
                 <p className="text-sm">
                   Don’t have an account?{" "}
@@ -135,12 +145,6 @@ const Signin = () => {
                   </span>
                 </p>
               </div>
-              {/* Footer Message
-              <div className="text-center mt-4 text-gray-600 font-medium">
-                <p className="text-sm font-bold">
-                  🌟 Where coding meets creativity 🌟
-                </p>
-              </div> */}
             </form>
           </div>
         </div>

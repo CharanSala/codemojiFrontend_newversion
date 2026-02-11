@@ -11,7 +11,7 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         const response = await apiFetch(
-          "https://codemoji.onrender.com/api/lead/leaderboard",
+          "http://localhost:5000/api/lead/leaderboard",
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
