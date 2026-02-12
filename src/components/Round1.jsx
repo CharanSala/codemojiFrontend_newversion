@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { apiFetch } from "../utils/api";
+import { Footer } from "./Footer";
 
 const Round1 = ({ setAllPassed }) => {
   const navigate = useNavigate();
 
   // ---------------- TIMER CONFIG ----------------
-  const ROUND1_DURATION = 10 * 60; // 1 minute as per your code
+  const ROUND1_DURATION = 10 * 60;
   const [timeLeft, setTimeLeft] = useState(ROUND1_DURATION);
 
   useEffect(() => {
@@ -18,7 +19,7 @@ const Round1 = ({ setAllPassed }) => {
         if (!email) return;
 
         const response = await apiFetch(
-          "http://localhost:5000/api/roundstart/round1",
+          "https://codemoji.onrender.com/api/roundstart/round1",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -34,7 +35,7 @@ const Round1 = ({ setAllPassed }) => {
           const remaining = ROUND1_DURATION - elapsed;
 
           if (remaining <= 0) {
-            apiFetch("http://localhost:5000/api/autosubmit1/round1", {
+            apiFetch("https://codemoji.onrender.com/api/autosubmit1/round1", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email }),
@@ -73,7 +74,7 @@ const Round1 = ({ setAllPassed }) => {
       if (!participantEmail) return;
       try {
         const response = await apiFetch(
-          `http://localhost:5000/api/get/getParticipantDetails?email=${participantEmail}`,
+          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${participantEmail}`,
         );
         const data = await response.json();
         if (response.ok) {
@@ -86,13 +87,9 @@ const Round1 = ({ setAllPassed }) => {
     fetchParticipant();
   }, [participantEmail]);
 
-  // --- LOGIC TO SELECT PROBLEMS BASED ON FETCHED DATA ---
   const { Emojicode1, result1, Emojicode2, result2 } = useMemo(() => {
     const r1 = participant?.randomnumber ?? 1;
     const r2 = r1 === 5 ? 1 : r1 + 1;
-
-    console.log("num1", r1);
-    console.log("num2", r2);
 
     const sets = {
       1: {
@@ -123,7 +120,7 @@ const Round1 = ({ setAllPassed }) => {
       Emojicode2: sets[r2].Emojicode,
       result2: sets[r2].result,
     };
-  }, [participant]); // Recalculate whenever participant data is loaded
+  }, [participant]);
 
   const predefinedValues = [1, 2];
   const [inputValues1, setInputValues1] = useState(["", ""]);
@@ -148,29 +145,11 @@ const Round1 = ({ setAllPassed }) => {
     setInputValues2(newValues);
   };
 
-  const fetchRound2SubTime = async (setSubtime2) => {
-    try {
-      const email = sessionStorage.getItem("participantEmail");
-      if (!email) return;
-      const response = await fetch(
-        `https://codemojibackend2k25.onrender.com/getround2submissiontime?email=${encodeURIComponent(email)}`,
-      );
-      const data = await response.json();
-      if (response.ok) setSubtime2(data.subtime2);
-    } catch (error) {
-      console.error("Error fetching submission time:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRound2SubTime(setSubtime2);
-  }, []);
-
   const handleSubmit1 = async () => {
     setIsLoading1(true);
     try {
       const response = await apiFetch(
-        "http://localhost:5000/api/logicpatch1/verify1",
+        "https://codemoji.onrender.com/api/logicpatch1/verify1",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -199,7 +178,7 @@ const Round1 = ({ setAllPassed }) => {
         return;
       }
       const response = await apiFetch(
-        "http://localhost:5000/api/logicpatch2/verify",
+        "https://codemoji.onrender.com/api/logicpatch2/verify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -220,99 +199,132 @@ const Round1 = ({ setAllPassed }) => {
     }
   };
 
-  useEffect(() => {
-    if (subtime1) setResultMessage("");
-  }, [subtime1]);
-  useEffect(() => {
-    if (subtime2) setAllPassed(true);
-  }, [subtime2]);
-
   return (
-    <div className="min-h-screen bg-white text-white ">
-      <div className="flex justify-center w-full px-10">
-        <h3 className="text-5xl pb-3 font-extrabold text-center bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-transparent bg-clip-text drop-shadow-lg animate-pulse">
-          Logic Patch
-        </h3>
-        <p className="absolute right-10 text-2xl font-semibold text-red-700 px-4 py-2 rounded-lg">
-          ⏰ {formatCountdown(timeLeft)}
-        </p>
+    <div className="h-fit bg-gray-50 text-white ">
+      {/* Responsive Timer Header */}
+      <div
+        className="
+  md:absolute md:top-28 md:right-10
+  sticky top-0 mb-5 md:mb-0 
+  bg-red-50 border border-red-200 text-red-700
+  px-4 py-2 rounded-full font-mono text-xl font-bold
+  shadow-lg transform -translate-y-2 transition-all duration-300
+  w-fit
+  mx-auto md:ml-auto md:mr-0
+"
+      >
+        ⏰ {formatCountdown(timeLeft)}
       </div>
 
       {resultMessage && (
-        <div className="mb-2 text-lg font-bold text-center text-yellow-700">
+        <div className="max-w-4xl mx-auto mb-8  px-4  text-yellow-800 rounded-lg text-center font-bold">
           {resultMessage}
         </div>
       )}
 
-      <div className="flex justify-between p-6 space-x-6">
+      {/* Main Responsive Grid */}
+      <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-6">
         {/* Box 1 */}
-        <div className="w-1/2 bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
-          <p className="text-cyan-400 font-semibold mb-5">
-            Task: Identify missing values for ❓
-          </p>
-          <pre
-            className="bg-gray-900 p-4 rounded-md text-green-400 overflow-auto"
-            style={{ userSelect: "none" }}
-          >
+        <div className="flex-1 bg-white p-5 md:p-8 rounded-2xl shadow-xl  transition-all">
+          <div className="flex items-center gap-2 mb-4">
+            <p className="text-slate-500 font-semibold text-lg">
+              🧩 Task1: Identify missing values for ❓
+            </p>
+          </div>
+
+          <pre className="bg-[#1e1e2e] p-4 rounded-xl text-[#3da667] overflow-x-auto text-sm md:text-base leading-relaxed border border-gray-900 mb-6 select-none">
             {Emojicode1}
           </pre>
-          <div className="mt-4">
+
+          <div className="space-y-4">
             {predefinedValues.map((_, index) => (
-              <div key={index} className="mt-2">
-                <label className="text-gray-300">Value {index + 1}: </label>
+              <div
+                key={index}
+                className="flex flex-col sm:flex-row sm:items-center gap-2"
+              >
+                <label className="text-gray-400 font-medium min-w-[80px]">
+                  Value {index + 1}:
+                </label>
                 <input
-                  type="text"
+                  type="number"
+                  placeholder="Enter value"
                   value={inputValues1[index]}
                   onChange={(e) => handleInputChange1(index, e.target.value)}
-                  className="p-2 ml-3 border rounded-md bg-gray-700 text-white"
+                  className="text-slate-800 w-full p-3 rounded-lg bg-gray-100  focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 outline-none transition-all"
                 />
               </div>
             ))}
           </div>
+
           <button
             onClick={handleSubmit1}
-            className={`mt-4 px-6 py-2 rounded-md text-white font-semibold ${subtime1 || subtime2 || isLoading1 ? "bg-gray-700" : "bg-cyan-500"}`}
+            className={`w-fit pr-5 pl-5 mt-6 py-3 rounded-xl font-bold text-lg shadow-lg transition-all transform active:scale-95 ${
+              subtime1 || subtime2 || isLoading1
+                ? "bg-gray-600 cursor-not-allowed opacity-50"
+                : "bg-indigo-500 hover:bg-indigo-600 hover:shadow-cyan-500/20"
+            }`}
             disabled={subtime1 || subtime2 || isLoading1}
           >
-            {isLoading1 ? "Submitting..." : "Submit"}
+            {isLoading1 ? "Submitting..." : "Verify"}
           </button>
-          <h2 className="mt-2 text-cyan-300">{resultMessage1}</h2>
+          {resultMessage1 && (
+            <h2 className="mt-4 text-start font-semibold text-slate-500 animate-pulse">
+              {resultMessage1}
+            </h2>
+          )}
         </div>
 
         {/* Box 2 */}
-        <div className="w-1/2 bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
-          <p className="text-cyan-400 font-semibold mb-5">
-            Task: Identify missing values for ❓
-          </p>
-          <pre
-            className="bg-gray-900 p-4 rounded-md text-green-400 overflow-auto"
-            style={{ userSelect: "none" }}
-          >
+        <div className="flex-1 bg-white p-5 md:p-8 rounded-2xl shadow-xl  transition-all">
+          <div className="flex items-center gap-2 mb-4">
+            <p className="text-slate-500 font-semibold text-lg">
+              🧠Task2: Identify missing values for ❓
+            </p>
+          </div>
+
+          <pre className="bg-[#1e1e2e] p-4 rounded-xl text-[#3da667] overflow-x-auto text-sm md:text-base leading-relaxed border border-gray-900 mb-6 select-none">
             {Emojicode2}
           </pre>
-          <div className="mt-4">
+
+          <div className="space-y-4">
             {predefinedValues.map((_, index) => (
-              <div key={index} className="mt-2">
-                <label className="text-gray-300">Value {index + 1}: </label>
+              <div
+                key={index}
+                className="flex flex-col sm:flex-row sm:items-center gap-2"
+              >
+                <label className="text-gray-400 font-medium min-w-[80px]">
+                  Value {index + 1}:
+                </label>
                 <input
-                  type="text"
+                  type="number"
+                  placeholder="Enter value"
                   value={inputValues2[index]}
                   onChange={(e) => handleInputChange2(index, e.target.value)}
-                  className="p-2 ml-3 border rounded-md bg-gray-700 text-white"
+                  className="text-slate-800 w-full p-3 rounded-lg bg-gray-100  focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 outline-none transition-all"
                 />
               </div>
             ))}
           </div>
+
           <button
             onClick={handleSubmit2}
-            className={`mt-4 px-6 py-2 rounded-md text-white font-semibold ${subtime2 || isLoading2 ? "bg-gray-700" : "bg-cyan-500"}`}
+            className={`w-fit pr-5 pl-5 p-3 mt-6 py-3 rounded-xl font-bold text-lg shadow-lg transition-all transform active:scale-95 ${
+              subtime2 || isLoading2
+                ? "bg-gray-600 cursor-not-allowed opacity-50"
+                : "bg-indigo-500 hover:bg-indigo-600 hover:shadow-cyan-500/20"
+            }`}
             disabled={subtime2 || isLoading2}
           >
-            {isLoading2 ? "Submitting..." : "Submit"}
+            {isLoading2 ? "Submitting..." : "Verify"}
           </button>
-          <h2 className="mt-2 text-cyan-300">{resultMessage2}</h2>
+          {resultMessage2 && (
+            <h2 className="mt-4 text-start font-semibold text-slate-500 animate-pulse">
+              {resultMessage2}
+            </h2>
+          )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

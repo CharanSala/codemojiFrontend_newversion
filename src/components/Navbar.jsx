@@ -1,173 +1,188 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { apiFetch } from "../utils/api";
+import { Home, LogIn, LogOut, Trophy, Info, Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to toggle menu visibility
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [emojies, setEmoji] = useState(0);
-
   const [EmailIn, setEmialIn] = useState(false);
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   useEffect(() => {
     const checkEmail = () => {
       const mailstatus = sessionStorage.getItem("participantEmail");
-
-      if (mailstatus) {
-        setEmialIn(true);
-      } else {
-        setEmialIn(false);
-      }
+      setEmialIn(!!mailstatus);
     };
-
     checkEmail();
   }, []);
 
   const handleSignOut = () => {
-    // Remove both storages
     sessionStorage.removeItem("participantEmail");
-    localStorage.removeItem("token"); // 🔐 IMPORTANT
-
+    localStorage.removeItem("token");
     setEmialIn(false);
-
     navigate("/");
   };
 
   useEffect(() => {
     const fetchPoints = async () => {
       try {
-        const email = sessionStorage.getItem("participantEmail"); // Get email from session storage
-        if (!email) {
-          console.error("No email found in session storage.");
-          return;
-        }
+        const email = sessionStorage.getItem("participantEmail");
+        if (!email) return;
 
         const response = await apiFetch(
-          `http://localhost:5000/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
+          `https://codemoji.onrender.com/api/getpoints/getPoints1?email=${encodeURIComponent(email)}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
           },
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch points");
-        }
-
+        if (!response.ok) throw new Error("Failed to fetch points");
         const data = await response.json();
-        console.log("emojies", data.points);
-
         setEmoji(data.points);
       } catch (error) {
         console.error("Error fetching points:", error);
       }
     };
-    const intervalId = setInterval(fetchPoints, 5000);
 
-    // Cleanup function to clear interval on component unmount
+    const intervalId = setInterval(fetchPoints, 5000);
     return () => clearInterval(intervalId);
   }, []);
 
   return (
-    <div className="bg-[#01052A] shadow-md">
-      {/* Navbar Container */}
-      <div className="flex items-center justify-between px-6 py-4 relative">
-        {/* Unique Title Design with Emojis */}
-        <h2 className="text-3xl font-bold text-gray-800 relative z-10 flex items-center">
-          <span className="mr-2">🚀</span>
-          <span className="text-gray-200">Code</span>
-          <span className="text-blue-500 font-light">Moji</span>
-          <span className="ml-2">😜</span>
-        </h2>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Logo Section */}
+        <Link to="/" className="flex items-center gap-2 group">
+          <h2 className="text-2xl font-black tracking-tight text-slate-900">
+            🚀 Code<span className="text-indigo-500 ">Moji </span>{" "}
+            <span className="text-lg">😜</span>
+          </h2>
+        </Link>
 
-        {/* Hamburger Menu for Small Screens */}
-        <button
-          onClick={toggleMenu}
-          className="lg:hidden text-gray-600 focus:outline-none"
-        >
-          <svg
-            className="w-6 h-6"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
+        {/* Desktop Menu */}
+        <ul className="hidden lg:flex items-center space-x-8">
+          <NavLink to="/" icon={<Home size={18} />} label="Home" />
 
-        {/* Navigation Links (Hidden on Small Screens, Visible on Larger Screens) */}
-        <ul
-          className={`flex space-x-8 text-lg font-medium relative z-10 lg:flex ${
-            isMenuOpen ? "block" : "hidden"
-          }`}
-        >
-          <li>
-            <Link
-              to="/"
-              className="text-gray-200 mt-3 hover:text-blue-500 transition duration-300 flex items-center"
-            >
-              🏠 Home
-            </Link>
-          </li>
-          <li>
-            {EmailIn ? (
+          {EmailIn ? (
+            <>
+              <NavLink
+                to="/leaderboard"
+                icon={<Trophy size={18} />}
+                label="Leaderboard"
+              />
               <button
                 onClick={handleSignOut}
-                className="text-gray-200 mt-3 hover:text-blue-500 transition duration-300 flex items-center bg-transparent border-none cursor-pointer"
+                className="flex items-center gap-2 text-slate-600 font-bold hover:text-red-500 transition-colors"
               >
-                🔑 Sign Out
+                <LogOut size={18} /> Sign Out
               </button>
-            ) : (
-              <Link
-                to="/signin"
-                className="text-gray-200 mt-3 hover:text-blue-500 transition duration-300 flex items-center"
-              >
-                🔑 Sign In
-              </Link>
-            )}
-          </li>
-
-          {EmailIn && (
-            <li>
-              <Link
-                to="/leaderboard"
-                className="text-gray-200 mt-3 hover:text-blue-500 transition duration-300 flex items-center"
-              >
-                🏆Leaderboard
-              </Link>
-              ,
-            </li>
+            </>
+          ) : (
+            <NavLink to="/signin" icon={<LogIn size={18} />} label="Sign In" />
           )}
 
-          <li>
-            <Link
-              to="/about"
-              className="text-gray-200 mt-3 hover:text-blue-500 transition duration-300 flex items-center"
-            >
-              ℹ️ About
-            </Link>
-          </li>
-          <li className="flex items-center gap-2 px-4 py-2  bg-[#01052A] rounded-lg shadow-md border border-gray-600">
-            <p className="text-white text-lg font-semibold flex items-center gap-2">
-              😜 <span className="text-yellow-400 pl-3">{emojies}</span>
-            </p>
+          <NavLink to="/about" icon={<Info size={18} />} label="About" />
+
+          {/* Points Badge */}
+          <li className="flex items-center gap-2 px-4 py-1.5 bg-indigo-50 border border-indigo-100 rounded-full shadow-sm">
+            <span className="text-lg">😜</span>
+            <span className="text-indigo-600 font-bold tabular-nums">
+              {emojies}
+            </span>
           </li>
         </ul>
 
-        {/* Navbar Decorative Underline */}
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-400 to-blue-600 transform scale-x-0 origin-left hover:scale-x-100 transition-all duration-500"></div>
+        {/* Mobile Toggle */}
+        <button onClick={toggleMenu} className="lg:hidden text-slate-900 p-2">
+          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
-    </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-2xl animate-in slide-in-from-top duration-300">
+          <ul className="flex flex-col p-6 space-y-6">
+            <MobileNavLink
+              to="/"
+              label="Home"
+              icon={<Home />}
+              onClick={toggleMenu}
+            />
+
+            {EmailIn ? (
+              <>
+                <MobileNavLink
+                  to="/leaderboard"
+                  label="Leaderboard"
+                  icon={<Trophy />}
+                  onClick={toggleMenu}
+                />
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    toggleMenu();
+                  }}
+                  className="flex items-center gap-4 text-slate-600 font-bold text-lg"
+                >
+                  <LogOut className="text-red-500" /> Sign Out
+                </button>
+              </>
+            ) : (
+              <MobileNavLink
+                to="/signin"
+                label="Sign In"
+                icon={<LogIn />}
+                onClick={toggleMenu}
+              />
+            )}
+
+            <MobileNavLink
+              to="/about"
+              label="About"
+              icon={<Info />}
+              onClick={toggleMenu}
+            />
+
+            <li className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+              <span className="font-bold text-slate-900">Your Emojis</span>
+              <div className="flex items-center gap-2 bg-white px-4 py-1 rounded-full border border-slate-200 shadow-sm">
+                <span>😜</span>
+                <span className="text-indigo-600 font-bold">{emojies}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      )}
+    </nav>
   );
 };
+
+// Internal Helper Components for Cleanliness
+const NavLink = ({ to, icon, label }) => (
+  <li>
+    <Link
+      to={to}
+      className="flex items-center gap-2 text-slate-600 font-bold hover:text-indigo-500 transition-colors"
+    >
+      {icon} {label}
+    </Link>
+  </li>
+);
+
+const MobileNavLink = ({ to, label, icon, onClick }) => (
+  <li>
+    <Link
+      to={to}
+      onClick={onClick}
+      className="flex items-center gap-4 text-slate-600 font-bold text-lg"
+    >
+      <span className="text-indigo-500">{icon}</span> {label}
+    </Link>
+  </li>
+);
 
 export default Navbar;

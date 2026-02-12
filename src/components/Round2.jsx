@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { apiFetch } from "../utils/api";
+import { Footer } from "./Footer";
 
 const Round2 = ({ setAllPassed2 }) => {
   const [participant, setParticipant] = useState(null);
@@ -16,7 +17,7 @@ const Round2 = ({ setAllPassed2 }) => {
     const fetchParticipantDetails = async () => {
       try {
         const response = await apiFetch(
-          `http://localhost:5000/api/get/getParticipantDetails?email=${encodeURIComponent(participantEmail)}`,
+          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${encodeURIComponent(participantEmail)}`,
         );
 
         const data = await response.json();
@@ -314,7 +315,7 @@ Mystery_box3 (🔢) {
       const input = withInput ? Input : ""; // Only send input if 'withInput' is true
 
       const response = await apiFetch(
-        "http://localhost:5000/api/compilecode/compile",
+        "https://codemoji.onrender.com/api/compilecode/compile",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -351,7 +352,7 @@ Mystery_box3 (🔢) {
       }
 
       const response = await apiFetch(
-        "http://localhost:5000/api/compilecode/compile",
+        "https://codemoji.onrender.com/api/compilecode/compile",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -459,7 +460,7 @@ Mystery_box3 (🔢) {
 
     try {
       const response = await apiFetch(
-        "http://localhost:5000/api/save/savecode",
+        "https://codemoji.onrender.com/api/save/savecode",
         {
           method: "POST",
           headers: {
@@ -514,11 +515,14 @@ Mystery_box3 (🔢) {
 
       try {
         // 🔥 Get / set round2 start time from DB
-        const res = await apiFetch("http://localhost:5000/api/round2/start", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
+        const res = await apiFetch(
+          "https://codemoji.onrender.com/api/round2/start",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          },
+        );
 
         const data = await res.json();
 
@@ -531,7 +535,7 @@ Mystery_box3 (🔢) {
           const remaining = ROUND2_DURATION - elapsed;
 
           if (remaining <= 0) {
-            apiFetch("http://localhost:5000/api/autosubmit/round2", {
+            apiFetch("https://codemoji.onrender.com/api/autosubmit/round2", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email }),
@@ -569,190 +573,290 @@ Mystery_box3 (🔢) {
   }, [subtime]);
 
   return (
-    <div>
-      <div className="flex justify-center w-full px-10">
-        <h3 className="text-5xl font-extrabold text-center pb-5 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-transparent bg-clip-text drop-shadow-lg animate-pulse">
-          Emoji Decription
-        </h3>
+    <div className="min-h-screen bg-[#F8FAFC] ">
+      {/* Header matching image */}
 
-        {/* Right-aligned Timer */}
-        <p className="absolute right-10 text-2xl font-semibold text-red-700  px-4 py-2 rounded-lg">
-          ⏰ {formatCountdown(timeLeft)}
-        </p>
+      <div
+        className="
+  md:absolute md:top-28 md:right-10
+  sticky top-0 mb-5 md:mb-0 
+  bg-red-50 border border-red-200 text-red-700
+  px-4 py-2 rounded-full font-mono text-xl font-bold
+  shadow-lg transform -translate-y-2 transition-all duration-300
+  w-fit
+  mx-auto md:ml-auto md:mr-0
+"
+      >
+        ⏰ {formatCountdown(timeLeft)}
       </div>
 
-      {/* {Round1sub ? (
-        <h3 className="text-green-700 font-bold text-lg mb-5 text-center">
-          Submission Time: {Round1sub}
-        </h3>
-      ) : (
-        <h3 className="text-lg mb-5 font-bold text-center text-red-700 "></h3>
-      )} */}
+      <main className="max-w-7xl mx-auto px-4 md:px-8 mt-8 flex flex-col md:flex-row gap-8">
+        {/* Left Section: The Challenge */}
+        <div className="w-full md:w-1/2 flex flex-col gap-6">
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 h-full">
+            <div className="flex items-center gap-3 ">
+              <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-[#6366F1]">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">
+                  The Challenge
+                </h2>
+                <p className="text-gray-500 text-sm">
+                  Convert the emoji-based logic into valid code
+                </p>
+              </div>
+            </div>
 
-      <div className="flex flex-col md:flex-row justify-center items-center md:items-start p-6 space-y-6 md:space-y-0 md:space-x-6 bg-white text-gray-900 min-h-screen">
-        {/* Emoji Code Section */}
-        <div className="w-full md:w-1/2 flex flex-col bg-gray-00 p-6 rounded-lg bg-slate-300">
-          <div className="p-4 rounded-lg bg-navy-100 ">
-            <p className="text-navy-700 mb-3 font-bold text-lg text-start">
-              🎯 <strong>Task:</strong> Convert this emoji-based code into a
-              valid program.
-            </p>
-            <pre
-              className="bg-navy-50 p-4 rounded-md text-navy-800 text-md font-bold"
-              style={{ userSelect: "none" }}
-            >
-              {Emojicode}
-            </pre>
+            <div className="bg-[#F8FAFC] rounded-2xl p-6 border border-gray-100 relative group">
+              <pre className="font-bold text-sm font-mono text-slate-700 leading-relaxed overflow-x-auto select-none">
+                {Emojicode}
+              </pre>
+            </div>
 
-            <div className="mt-4">
-              <h4 className="font-semibold text-lg text-navy-600 text-start pl-3">
+            <div className="mt-8">
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2 mb-4">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                  ></path>
+                </svg>
                 Test Cases
-              </h4>
-              {exampleTestCases.map((testCase, index) => (
-                <div key={index} className="mt-2 p-3 rounded-md bg-navy-50 ">
-                  {index === 0 && (
-                    <p className="font-bold text-navy-500">
-                      Initial Predefined Input
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {exampleTestCases.map((tc, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white border border-gray-100 p-5 rounded-2xl hover:border-indigo-200 transition-colors"
+                  >
+                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">
+                      Test Case {idx + 1}
                     </p>
-                  )}
-                  <p>
-                    <strong>Input:</strong> {testCase.input}
-                  </p>
-                  <p>
-                    <strong>Output:</strong> {testCase.output}
-                  </p>
-                </div>
-              ))}
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-600 font-medium">
+                        Input: <span className="text-gray-900">{tc.input}</span>
+                      </span>
+                      <svg
+                        className="w-4 h-4 text-gray-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        ></path>
+                      </svg>
+                      <span className="text-sm font-bold text-[#6366F1]">
+                        Output: {tc.output}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Write Your Code Section */}
-        <div className="w-full md:w-1/2 flex flex-col bg-white rounded-lg">
-          <h3 className="text-2xl font-bold mb-4 text-navy-600 text-start">
-            Write Your Code
-          </h3>
-          <div className="flex  space-x-6">
-            <div className="mb-4 flex justify-center">
+        {/* Right Section: Editor & Output */}
+        <div className="w-full md:w-1/2 flex flex-col gap-6">
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="text-[#6366F1]">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                    ></path>
+                  </svg>
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Write Your Code
+                </h2>
+              </div>
               <select
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="p-2 bg-navy-100 border border-gray-300 rounded-md text-navy-700"
+                className="bg-gray-50 border-none text-xs font-bold text-gray-500 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 outline-none"
               >
-                <option value="" disabled>
-                  Lang
-                </option>
                 {languages.map((lang) => (
-                  <option key={lang} value={lang} className="text-navy-900">
-                    {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                  <option key={lang} value={lang}>
+                    {lang === "python" ? "Python 3.10" : lang.toUpperCase()}
                   </option>
                 ))}
               </select>
             </div>
-            {/* <div className="mb-4 flex justify-center">
-                <label className="flex items-center text-navy-700">
-                    <input
-                        type="checkbox"
-                        checked={!withInput}
-                        onChange={() => setWithInput(!withInput)}
-                        className="mr-2"
-                    />
-                    <span>Run without input</span>
-                </label>
-            </div> */}
-          </div>
 
-          <div className="pt-3 bg-navy-50 rounded-lg ">
-            <MonacoEditor
-              height="400px"
-              language={selectedLanguage}
-              theme="light"
-              value={code}
-              onChange={handleCodeChange}
-              onMount={handleEditorDidMount}
-            />
-          </div>
+            <div className="border border-gray-100 rounded-2xl overflow-hidden shadow-inner">
+              <MonacoEditor
+                height="420px"
+                language={selectedLanguage}
+                theme="light"
+                value={code}
+                onChange={handleCodeChange}
+                onMount={handleEditorDidMount}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 14,
+                  padding: { top: 20 },
+                }}
+              />
+            </div>
 
-          <div className="flex justify-start space-x-4 mt-4">
-            <button
-              onClick={handleRunCode}
-              className={`px-6 py-2 rounded-md shadow-md flex items-center justify-center gap-2 transition-all duration-300 ease-in-out 
-        ${isLoading1 ? " bg-[#01052A] text-white cursor-not-allowed" : "bg-[#01052A] text-white hover:bg-navy-50"}`}
-              disabled={isLoading1}
-            >
-              {isLoading1 ? (
-                <>
+            {/* Output Section */}
+            <div className="mt-8">
+              <div className="flex items-center gap-2 mb-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Output
+              </div>
+              <div className="bg-[#1e1e2e] rounded-2xl p-6 font-mono text-sm shadow-xl">
+                <pre className="text-[#3da667] whitespace-pre-wrap">
+                  {output
+                    ? `> Execution successful\n> Output: ${output}`
+                    : "> System ready. Waiting for execution..."}
+                </pre>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-4 mt-8">
+              <button
+                onClick={handleRunCode}
+                disabled={isLoading1}
+                className="flex-1 py-4 px-6 rounded-2xl border-2 border-indigo-100 text-[#6366F1] font-bold hover:bg-indigo-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isLoading1 ? (
+                  <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>{" "}
+                    Run Code
+                  </>
+                )}
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={!status || Round1sub || isLoading2}
+                className="flex-[1.5] py-4 px-6 rounded-2xl bg-[#6366F1] text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:shadow-none"
+              >
+                {isLoading2 ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Running...
-                </>
-              ) : (
-                "Run Code"
-              )}
-            </button>
+                ) : (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                      ></path>
+                    </svg>{" "}
+                    Submit Solution
+                  </>
+                )}
+              </button>
+            </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={!status || Round1sub || isLoading2}
-              className={`px-8 py-2 rounded-md shadow-md flex items-center justify-center gap-2 transition-all duration-300 ease-in-out 
-        ${!status || Round1sub || isLoading2 ? "bg-[#01052A] text-white cursor-not-allowed" : "bg-[#01052A] text-white hover:bg-navy-600"}`}
-            >
-              {isLoading2 ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Submitting...
-                </>
-              ) : (
-                "Submit"
-              )}
-            </button>
-          </div>
-          <div className="mt-4">
-            <h4 className="text-lg font-semibold text-navy-600 text-start pl-2">
-              Output
-            </h4>
-            <pre className="bg-navy-50 p-4 rounded-md text-navy-800 text-sm border border-gray-300">
-              {output || "No output yet."}
-            </pre>
-          </div>
-          <div className="mt-4">
-            <h4 className="text-lg font-semibold text-navy-600 text-start">
-              Test Case Results
-            </h4>
-            <ul>
-              {testResults.failedCount === 0 &&
-              testResults.satisfiedTestCases.length > 0 ? (
-                <>
-                  <li className="text-green-600 font-bold text-start">
-                    ✅ All Test Cases Passed!
-                  </li>
-                  {testResults.satisfiedTestCases.map((tc, index) => (
-                    <li key={index} className="text-green-600 text-start">
-                      <strong>Input:</strong> {tc.input} <br />
-                      <strong>Expected:</strong> {tc.expected} <br />
-                      <strong>Got:</strong> {tc.got} <br />
-                      <strong>Status:</strong> ✅ Success
+            {/* Test Results Display (Logic preserved, styling adjusted to image tone) */}
+            <div className="mt-4">
+              <h4 className="text-gray-400 text-lg font-semibold text-navy-600 text-start">
+                Test Case Results
+              </h4>
+              <ul>
+                {testResults.failedCount === 0 &&
+                testResults.satisfiedTestCases.length > 0 ? (
+                  <>
+                    <li className="text-green-600 font-bold text-start">
+                      ✅ All Test Cases Passed!
                     </li>
-                  ))}
-                </>
-              ) : (
-                <>
-                  {testResults.satisfiedTestCases?.length > 0 && (
-                    <li className="text-green-600 ">
-                      ✅ Passed Test Cases:{" "}
-                      {testResults.satisfiedTestCases.length}
-                    </li>
-                  )}
-                  {testResults.failedCount > 0 && (
-                    <li className="text-red-500 ">
-                      ❌ Failed Test Cases: {testResults.failedCount}
-                    </li>
-                  )}
-                </>
-              )}
-            </ul>
+                    {testResults.satisfiedTestCases.map((tc, index) => (
+                      <li key={index} className="text-green-600 text-start">
+                        <strong>Input:</strong> {tc.input} <br />
+                        <strong>Expected:</strong> {tc.expected} <br />
+                        <strong>Got:</strong> {tc.got} <br />
+                        <strong>Status:</strong> ✅ Success
+                      </li>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    {testResults.satisfiedTestCases?.length > 0 && (
+                      <li className="text-green-600 ">
+                        ✅ Passed Test Cases:{" "}
+                        {testResults.satisfiedTestCases.length}
+                      </li>
+                    )}
+                    {testResults.failedCount > 0 && (
+                      <li className="mt-1 font-bold text-red-500 ">
+                        Failed Test Cases: {testResults.failedCount}
+                      </li>
+                    )}
+                  </>
+                )}
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };

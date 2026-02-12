@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api";
+import { Footer } from "./Footer";
+
 const Round3 = ({ setAllPassed3 }) => {
   const problemSets = {
     1: {
@@ -72,11 +74,14 @@ const Round3 = ({ setAllPassed3 }) => {
       if (!email) return;
 
       try {
-        const res = await apiFetch("http://localhost:5000/api/round3/start", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
+        const res = await apiFetch(
+          "https://codemoji.onrender.com/api/round3/start",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          },
+        );
 
         const data = await res.json();
 
@@ -87,7 +92,7 @@ const Round3 = ({ setAllPassed3 }) => {
           const remaining = Math.floor((ROUND3_DURATION - elapsed) / 1000);
 
           if (remaining <= 0) {
-            apiFetch("http://localhost:5000/api/autosubmit/round3", {
+            apiFetch("https://codemoji.onrender.com/api/autosubmit/round3", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email }),
@@ -116,12 +121,18 @@ const Round3 = ({ setAllPassed3 }) => {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  const formatCountdown = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (!participantEmail) return;
       try {
         const pRes = await apiFetch(
-          `http://localhost:5000/api/get/getParticipantDetails?email=${participantEmail}`,
+          `https://codemoji.onrender.com/api/get/getParticipantDetails?email=${participantEmail}`,
         );
         const pData = await pRes.json();
         if (pRes.ok) {
@@ -134,7 +145,7 @@ const Round3 = ({ setAllPassed3 }) => {
         }
 
         const hRes = await apiFetch(
-          "http://localhost:5000/api/gethint/gethints",
+          "https://codemoji.onrender.com/api/gethint/gethints",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -168,7 +179,7 @@ const Round3 = ({ setAllPassed3 }) => {
     setIsLoading1(true);
     try {
       const response = await apiFetch(
-        "http://localhost:5000/api/output/outputverify",
+        "https://codemoji.onrender.com/api/output/outputverify",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -195,7 +206,7 @@ const Round3 = ({ setAllPassed3 }) => {
     const endpoints = ["updatepoints", "updatepoints1", "updatepoints2"];
     try {
       const response = await apiFetch(
-        `http://localhost:5000/api/update/${endpoints[hintNum - 1]}`,
+        `https://codemoji.onrender.com/api/update/${endpoints[hintNum - 1]}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -217,60 +228,108 @@ const Round3 = ({ setAllPassed3 }) => {
   };
 
   return (
-    <div>
-      <div className="pb-7 rounded-b-xl shadow-lg shadow-gray-300">
-        <div className="flex justify-center w-full px-10 relative">
-          <h2 className="text-5xl font-extrabold text-center pb-4 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 text-transparent bg-clip-text drop-shadow-lg animate-pulse">
-            Code Unravel
-          </h2>
-          <p className="absolute right-10 text-2xl font-semibold text-red-700 px-4 py-2 rounded-lg bg-gray-100 shadow-inner">
-            ⏳ {formatTimeLeft(timeLeft)}
-          </p>
+    <div className="bg-[#F8FAFC] ">
+      {/* Header Info Bar (Timer and Points) */}
+      <div className="max-w-7xl mx-auto px-6 pt-6 flex justify-end gap-4">
+        <div
+          className="
+  md:absolute md:top-28 md:right-10
+  sticky top-0 mb-5 md:mb-0 
+  bg-red-50 border border-red-200 text-red-700
+  px-4 py-2 rounded-full font-mono text-xl font-bold
+  shadow-lg transform -translate-y-2 transition-all duration-300
+  w-fit
+  mx-auto md:ml-auto md:mr-0
+"
+        >
+          {" "}
+          ⏰ {formatCountdown(timeLeft)}
         </div>
       </div>
 
-      <div className="flex justify-between p-10 space-x-6 min-h-screen text-white">
-        <div className="w-1/2">
-          <div className="bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700">
-            <p className="text-xl font-semibold text-gray-300">
-              🔍 Analyze the Emoji Code:
-            </p>
+      {/* Main Content Area */}
+      <div className="  mx-auto px-6 flex flex-col lg:flex-row gap-8">
+        {/* LEFT COLUMN: Emoji Analysis */}
+        <div className="flex-1 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                ></path>
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-slate-800">
+              Analyze the Emoji Code
+            </h2>
+          </div>
+
+          <div className="bg-[#1e1e2e] rounded-2xl p-6 mb-8 shadow-inner overflow-hidden relative">
             <pre
-              className="bg-gray-900 p-5 rounded-lg mt-4 font-mono border border-gray-600 shadow-sm overflow-auto"
+              className=" font-mono text-sm text-indigo-100 leading-relaxed overflow-x-auto"
               style={{ userSelect: "none" }}
             >
               {Emoji}
             </pre>
-            <div className="mt-6">
-              <label className="block font-semibold text-gray-300 text-lg">
-                Enter the exact output:
-              </label>
+          </div>
+
+          <div className="space-y-4">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Enter the exact output
+            </label>
+            <div className="flex gap-3">
               <input
                 type="text"
+                placeholder="Your answer here..."
                 value={userOutput}
                 onChange={(e) => setUserOutput(e.target.value)}
-                className="w-full p-3 mt-3 border-2 border-gray-600 bg-gray-900 text-white rounded-xl focus:ring focus:ring-blue-400"
+                className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
                 disabled={isSubmitted || timeLeft === 0}
               />
+              <button
+                onClick={handleSubmit}
+                disabled={isLoading1 || isSubmitted || timeLeft === 0}
+                className={`px-8 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-100 ${
+                  isSubmitted
+                    ? "bg-emerald-500 text-white"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                } disabled:opacity-50`}
+              >
+                {isLoading1 ? (
+                  "..."
+                ) : isSubmitted ? (
+                  "Submitted"
+                ) : (
+                  <>
+                    Submit{" "}
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      ></path>
+                    </svg>
+                  </>
+                )}
+              </button>
             </div>
-            <button
-              onClick={handleSubmit}
-              className={`mt-6 px-6 py-3 text-lg font-bold rounded-xl transition duration-300 ${
-                isLoading1 || isSubmitted || timeLeft === 0
-                  ? "bg-gray-600 cursor-not-allowed opacity-70"
-                  : "bg-blue-500 hover:bg-blue-600 text-white shadow-md"
-              }`}
-              disabled={isLoading1 || isSubmitted || timeLeft === 0}
-            >
-              {isLoading1
-                ? "Submitting..."
-                : isSubmitted
-                  ? "Submitted"
-                  : "Submit"}
-            </button>
             {message && (
               <p
-                className={`mt-5 text-lg font-semibold ${message.includes("✅") ? "text-green-400" : "text-red-500"}`}
+                className={`text-sm font-bold mt-2 ${message.includes("✅") ? "text-emerald-500" : "text-rose-500"}`}
               >
                 {message}
               </p>
@@ -278,96 +337,122 @@ const Round3 = ({ setAllPassed3 }) => {
           </div>
         </div>
 
-        <div className="w-1/2">
-          <div className="bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-700">
-            <div className="flex justify-between items-center w-full">
-              <div className="flex gap-x-4">
-                <button
-                  className={`px-4 py-2 rounded-lg font-bold transition ${!hint1 ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-700 text-gray-400 cursor-not-allowed"}`}
-                  onClick={() => useHint(1, 10, setLoadingH1)}
-                  disabled={hint1 || loadingH1 || isSubmitted}
-                >
-                  {loadingH1 ? "..." : hint1 ? "Hint 1 Used" : "Hint 1"}
-                </button>
-                <button
-                  className={`px-4 py-2 rounded-lg font-bold transition ${hint1 && !hint2 ? "bg-green-500 hover:bg-green-600" : "bg-gray-700 text-gray-400 cursor-not-allowed"}`}
-                  onClick={() => useHint(2, 20, setLoadingH2)}
-                  disabled={!hint1 || hint2 || loadingH2 || isSubmitted}
-                >
-                  {loadingH2 ? "..." : hint2 ? "Hint 2 Used" : "Hint 2"}
-                </button>
-                <button
-                  className={`px-4 py-2 rounded-lg font-bold transition ${hint2 && !hint3 ? "bg-red-500 hover:bg-red-600" : "bg-gray-700 text-gray-400 cursor-not-allowed"}`}
-                  onClick={() => useHint(3, 30, setLoadingH3)}
-                  disabled={!hint2 || hint3 || loadingH3 || isSubmitted}
-                >
-                  {loadingH3 ? "..." : hint3 ? "Hint 3 Used" : "Hint 3"}
-                </button>
+        {/* RIGHT COLUMN: Hints & Guidelines */}
+        <div className="w-full lg:w-[400px] flex flex-col gap-6">
+          {/* Hints Section */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                <span className="text-yellow-500">💡</span> Available Hints
+              </h3>
+              <span className="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md">
+                Points: {points}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              <button
+                onClick={() => useHint(1, 10, setLoadingH1)}
+                disabled={hint1 || isSubmitted}
+                className={`py-3 rounded-xl text-xs font-bold transition-all ${hint1 ? "bg-indigo-600 text-white shadow-md shadow-indigo-100" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}
+              >
+                {loadingH1 ? "..." : "Hint 1"}
+              </button>
+              <button
+                onClick={() => useHint(2, 20, setLoadingH2)}
+                disabled={!hint1 || hint2 || isSubmitted}
+                className={`py-3 rounded-xl text-xs font-bold transition-all ${hint2 ? "bg-indigo-600 text-white shadow-md shadow-indigo-100" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}
+              >
+                {loadingH2 ? "..." : "Hint 2"}
+              </button>
+              <button
+                onClick={() => useHint(3, 30, setLoadingH3)}
+                disabled={!hint2 || hint3 || isSubmitted}
+                className={`py-3 rounded-xl text-xs font-bold transition-all ${hint3 ? "bg-indigo-600 text-white shadow-md shadow-indigo-100" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}
+              >
+                {loadingH3 ? "..." : "Hint 3"}
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {hint1 && (
+                <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl animate-fadeIn">
+                  <p className="text-xs leading-relaxed text-indigo-700">
+                    <strong>Hint 1:</strong> {Hint1Text}
+                  </p>
+                </div>
+              )}
+              {hint2 && (
+                <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl animate-fadeIn">
+                  <p className="text-xs leading-relaxed text-emerald-700">
+                    <strong>Hint 2:</strong> {Hint2Text}
+                  </p>
+                </div>
+              )}
+              {hint3 && (
+                <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl animate-fadeIn">
+                  <p className="text-xs leading-relaxed text-rose-700">
+                    <strong>Hint 3:</strong> {Hint3Text}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Guidelines Section */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4">
+              <span className="text-indigo-600">📄</span> Round 3 Guidelines
+            </h3>
+            <div className="space-y-4 text-xs font-medium text-slate-500">
+              <div className="flex gap-3">
+                <div className="w-5 h-5 bg-indigo-50 rounded flex items-center justify-center text-indigo-600 shrink-0">
+                  1
+                </div>
+                <p>Hint 1: Deducts 10 points. Unlocks Hint 2.</p>
               </div>
-              <div className="text-xl font-extrabold text-white">
-                🏆 Points: <span className="text-blue-400 ml-2">{points}</span>
+              <div className="flex gap-3">
+                <div className="w-5 h-5 bg-indigo-50 rounded flex items-center justify-center text-indigo-600 shrink-0">
+                  2
+                </div>
+                <p>Hint 2: Deducts 20 points. Unlocks Hint 3.</p>
+              </div>
+              <div className="flex gap-3">
+                <div className="w-5 h-5 bg-indigo-50 rounded flex items-center justify-center text-indigo-600 shrink-0">
+                  3
+                </div>
+                <p>Hint 3: Deducts 30 points.</p>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col mt-4 space-y-2">
-            {hint1 && (
-              <p className="bg-gray-800 text-blue-400 text-center font-semibold px-4 py-5 rounded-md border border-blue-900 animate-fadeIn">
-                <span className="text-white">Hint 1: </span> {Hint1Text}
-              </p>
-            )}
-            {hint2 && (
-              <p className="bg-gray-800 text-green-400 text-center font-semibold px-4 py-5 rounded-md border border-green-900 animate-fadeIn">
-                <span className="text-white">Hint 2: </span> {Hint2Text}
-              </p>
-            )}
-            {hint3 && (
-              <p className="bg-gray-800 text-red-400 text-center font-semibold px-4 py-5 rounded-md border border-red-900 animate-fadeIn">
-                <span className="text-white">Hint 3: </span> {Hint3Text}
-              </p>
-            )}
-          </div>
-
-          <div className="mt-5 p-6 bg-gray-900 rounded-lg shadow-lg border border-gray-700">
-            {isSubmitted ? (
-              <div className="text-center py-4">
-                <h1 className="text-2xl font-bold text-blue-400">
-                  🎉 Thanks for Participating!
-                </h1>
-                <p className="text-gray-400 mt-2">
-                  Your results are being processed.
-                </p>
-              </div>
-            ) : (
-              <>
-                <h1 className="text-xl font-bold text-gray-200 mb-4 underline">
-                  Round 3 Guidelines
-                </h1>
-                <ul className="space-y-2 text-gray-300">
-                  <li className="bg-gray-800 px-4 py-2 rounded-md shadow-sm">
-                    <span className="font-semibold text-blue-400">
-                      🔹 Hint 1:
-                    </span>{" "}
-                    Deducts 10 points. Unlocks Hint 2.
-                  </li>
-                  <li className="bg-gray-800 px-4 py-2 rounded-md shadow-sm">
-                    <span className="font-semibold text-green-400">
-                      🔹 Hint 2:
-                    </span>{" "}
-                    Deducts 20 points. Unlocks Hint 3.
-                  </li>
-                  <li className="bg-gray-800 px-4 py-2 rounded-md shadow-sm">
-                    <span className="font-semibold text-red-400">
-                      🔹 Hint 3:
-                    </span>{" "}
-                    Deducts 30 points.
-                  </li>
-                </ul>
-              </>
-            )}
+          {/* Pro Tip Section matching image */}
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-3xl text-white shadow-lg shadow-indigo-200">
+            <div className="flex items-center gap-2 mb-2 font-bold italic">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              Pro Tip
+            </div>
+            <p className="text-xs opacity-90 leading-relaxed">
+              Trace the recursion carefully! Each emoji represents a specific
+              mathematical operation or condition. Watch out for the base case
+              🔢 == 0️⃣.
+            </p>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
